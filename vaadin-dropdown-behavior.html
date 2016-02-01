@@ -61,7 +61,7 @@
     },
 
     _open: function() {
-      document.body.appendChild(this.$.overlay);
+      Polymer.dom(document.body).appendChild(this.$.overlay);
 
       this._addOutsideClickListener();
 

@@ -138,7 +138,7 @@ enable usage within an `iron-form`.
     <vaadin-combo-box-overlay
         id="overlay"
         _aria-active-index="{{_ariaActiveIndex}}"
-        _selected-item="{{_selectedItem}}"
+        _selected-item="{{selectedItem}}"
         position-target="[[_positionTarget]]"
         _focused-index="[[_focusedIndex]]"
         on-down="_blurInput"
@@ -199,6 +199,11 @@ enable usage within an `iron-form`.
       _filter: {
         type: String,
         value: ''
+      },
+
+      selectedItem: {
+        type: Object,
+        notify: true
       }
     },
 
@@ -215,6 +220,14 @@ enable usage within an `iron-form`.
     ready: function() {
       this._addKeyEventListeners();
       Polymer.IronA11yAnnouncer.requestAvailability();
+    },
+
+    attached: function() {
+      this._setOverlayItemsTemplate();
+    },
+
+    _setOverlayItemsTemplate: function() {
+      this.$.overlay.template = Polymer.dom(this).querySelector('template');
     },
 
     /**

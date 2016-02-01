@@ -6,6 +6,7 @@
 <link rel="import" href="../iron-list/iron-list.html">
 <link rel="import" href="../paper-styles/shadow.html">
 <link rel="import" href="vaadin-overlay-behavior.html">
+<link rel="import" href="vaadin-combo-box-item.html">
 
 <dom-module id="vaadin-combo-box-overlay">
   <style>
@@ -17,7 +18,7 @@
       border-radius: 0 0 2px 2px;
     }
 
-    #scroller {
+    :host ::content #scroller {
       overflow: auto;
       max-height: 65vh;
 
@@ -25,31 +26,39 @@
       transform: translate3d(0,0,0);
     }
 
-    #selector {
+    :host ::content #selector {
       padding-top: 8px;
       padding-bottom: 8px;
+
+      --iron-list-items-container: {
+        @apply(--vaadin-combo-box-item-list);
+      };
     }
 
-    #selector .item {
+    :host ::content #selector .item {
       cursor: pointer;
       padding: 13px 16px;
       color: var(--primary-text-color);
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
+      @apply(--vaadin-combo-box-item);
     }
 
-    #selector:not([touch-device]) .item:hover,
-    #selector .item[focused] {
+    :host ::content #selector:not([touch-device]) .item:hover,
+    :host ::content #selector .item[focused] {
       background: #eee;
+      @apply(--vaadin-combo-box-item-focused);
     }
 
-    #selector .item[selected] {
+    :host ::content #selector .item[selected] {
       color: var(--default-primary-color);
+      @apply(--vaadin-combo-box-item-selected);
     }
   </style>
 
   <template>
+
     <div id="scroller" scroller="[[_getScroller()]]">
       <iron-list
           id="selector"
@@ -60,19 +69,25 @@
           selected-item="{{_selectedItem}}"
           items="[[_items]]"
           selection-enabled>
-        <template>
-          <div class="item"
+        <template id="itemTemplate">
+          <vaadin-combo-box-item
+              class="item"
+              item="[[item]]"
+              template="[[template]]"
               id$="it[[index]]"
               selected$="[[selected]]"
               role$="[[_getAriaRole(index)]]"
               aria-selected$="[[_getAriaSelected(_focusedIndex,index)]]"
               focused$="[[_isItemFocused(_focusedIndex,index)]]">
-              [[item]]
-          </div>
+          </vaadin-combo-box-item>
         </template>
       </iron-list>
     </div>
+
+    <content></content>
+
   </template>
+
 </dom-module>
 
 <script>
@@ -121,11 +136,19 @@
         type: Number,
         notify: true,
         computed: '_getAriaActiveIndex(_focusedIndex)'
+      },
+
+      template: {
+        type: Object
       }
     },
 
     ready: function() {
       this._patchWheelOverScrolling();
+    },
+
+    attached: function() {
+      Polymer.dom(this).appendChild(this.$.scroller);
     },
 
     _isItemFocused: function(focusedIndex, itemIndex) {

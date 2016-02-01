@@ -1,0 +1,60 @@
+<!--
+@element vaadin-combo-box-item
+-->
+
+<link rel="import" href="../polymer/polymer.html">
+
+<dom-module id="vaadin-combo-box-item">
+  <style>
+    :host {
+    }
+  </style>
+
+  <template>
+    <template id="defaultItemTemplate">
+      <div>[[item]]</div>
+    </template>
+    <content></content>
+  </template>
+</dom-module>
+
+<script>
+  Polymer({
+    is: 'vaadin-combo-box-item',
+
+    behaviors: [
+      Polymer.Templatizer
+    ],
+
+    properties: {
+
+      item: {
+        type: Object,
+        observer: '_itemChanged'
+      },
+
+      template: Object
+
+    },
+
+    ready: function() {
+      this.templatize(this.template || this.$.defaultItemTemplate);
+      this._itemTemplateInstance = this.stamp();
+      Polymer.dom(this).appendChild(this._itemTemplateInstance.root);
+      // if (!this._itemTemplateInstance) {
+      //   this._itemTemplateInstance = this.stamp(this.item);
+      //   Polymer.dom(this).appendChild(this._itemTemplateInstance.root);
+      // }
+    },
+
+    _itemChanged: function(item) {
+      this._itemTemplateInstance.item = item;
+    },
+
+    _forwardInstanceProp: function(prop, value) {
+      console.log('fip', prop, value);
+      this._itemTemplateInstance[prop] = value;
+    }
+
+  });
+</script>
