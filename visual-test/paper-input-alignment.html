@@ -1,0 +1,26 @@
+<!doctype html>
+<html>
+
+<head>
+  <script src='../../webcomponentsjs/webcomponents-lite.js'></script>
+  <link href='../vaadin-combo-box.html' rel='import'>
+  <link href="../../paper-input/paper-input.html" rel="import">
+</head>
+
+<body>
+  <!-- container added to make sure underline shows up in the screenshots -->
+  <div id="container" style="display: flex; padding: 20px; justify-content: space-between;width: 400px;">
+    <vaadin-combo-box style="width: 200px" items="[[items]]"></vaadin-combo-box>
+    <paper-input value="foobar"></paper-input>
+  </div>
+
+  <script>
+    document.addEventListener('WebComponentsReady', function() {
+      var combobox = combobox || document.querySelector("vaadin-combo-box");
+
+      combobox.items = ["foo", "bar", "barbar"];
+    });
+  </script>
+</body>
+
+</html>

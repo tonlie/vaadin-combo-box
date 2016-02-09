@@ -6,6 +6,9 @@
   "devDependencies": {
     "bower": "latest",
     "chalk": "^1.1.1",
+    "gemini": "^2.1.1",
+    "gemini-express": "^1.0.0",
+    "gemini-sauce": "^1.0.0",
     "gulp": "latest",
     "gulp-html-extract": "0.0.3",
     "gulp-jscs": "^3.0.2",

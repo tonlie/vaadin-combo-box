@@ -1,0 +1,14 @@
+rootUrl: http://localhost:8080/components/vaadin-combo-box/visual-test
+gridUrl: http://foo@ondemand.saucelabs.com:80/wd/hub
+
+screenshotsDir: './visual-test/screens'
+system:
+  plugins:
+    sauce: true
+
+browsers:
+  chrome:
+    desiredCapabilities:
+      browserName: chrome
+      platform: "Windows 10"
+      version: "47.0"
