@@ -5,10 +5,15 @@ node_js:
 cache:
   directories:
     - node_modules
+env:
+ - CXX=g++-4.8
+addons:
+ apt:
+  sources:
+    - ubuntu-toolchain-r-test
+  packages:
+    - gcc-4.8
+    - g++-4.8
 install: travis_retry npm install
 script:
-  - gulp lint:js
-  - gulp lint:html
-  - travis_retry gulp test:mobile
-  - travis_retry gulp test:desktop
-  - travis_retry gulp test:shadow
+  - node --harmony node_modules/polyserve/bin/polyserve & node node_modules/gemini/bin/gemini test visual-test/test.js
