@@ -1,14 +1,32 @@
 rootUrl: http://localhost:8080/components/vaadin-combo-box/visual-test
-gridUrl: http://foo@ondemand.saucelabs.com:80/wd/hub
+gridUrl: http://Saulis:542a7d97-85fb-4bfd-b71b-21272d27be06@ondemand.saucelabs.com:80/wd/hub
 
 screenshotsDir: './visual-test/screens'
 system:
   plugins:
-    sauce: true
+    sauce: false
 
 browsers:
+  ios:
+    calibrate: false
+    desiredCapabilities:
+      browserName: "iphone"
+      platform: "OS X 10.11"
+      version: "9.2"
   chrome:
     desiredCapabilities:
-      browserName: chrome
+      browserName: "chrome"
       platform: "Windows 10"
-      version: "47.0"
+      version: "47"
+  firefox:
+    desiredCapabilities:
+      browserName: "firefox"
+      platform: "Windows 10"
+      version: "43"
+  ie11:
+    desiredCapabilities:
+      enablePersistentHover: true
+      requireWindowFocus: true
+      browserName: "internet explorer"
+      platform: "Windows 10"
+      version: "11"
