@@ -217,6 +217,7 @@
       } else if (index > this._lastVisibleIndex()) {
         this.$.selector.scrollToIndex(index - this._visibleItemsCount() + 1);
       }
+      this.$.selector.attachedCallback();
     },
 
     // Note: this whole scroller thing is done to support iron lists scrollToIndex()

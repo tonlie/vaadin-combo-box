@@ -431,7 +431,10 @@ Custom property | Description | Default
       this.async(function() {
         this.$.overlay.hidden = (this.items === undefined || this.items === null);
         this.$.overlay._scrollIntoView(this._focusedIndex);
-      });
+        this.async(function() {
+          this.$.overlay._scrollIntoView(this._focusedIndex);
+        }, 100);
+      }, 1);
     },
 
     _onClosed: function() {
