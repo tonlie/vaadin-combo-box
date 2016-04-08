@@ -76,6 +76,21 @@
       combobox.$.overlay.$.selector.toggleSelectionForItem('foo');
       expect(valueChangedSpy.callCount).to.equal(0);
     });
+
+    it('should clear the value when empty item selected', function(done) {
+      combobox.items = ['', 'foo', 'bar'];
+      combobox.open();
+
+      combobox.async(function() {
+        Polymer.Base.fire('tap', {}, {
+          bubbles: true,
+          node: selector.querySelector('.item')
+        });
+        combobox.open();
+        expect(selector.querySelector('[selected]')).to.be.null;
+        done();
+      });
+    });
   });
 
   describe('clearing a selection', function() {

@@ -58,6 +58,12 @@
 
           expect(comboBox._focusedIndex).to.eql(2);
         });
+
+        it('should support empty string as an item', function() {
+          comboBox.items = ['', 'foo', 'bar'];
+          comboBox.value = 'foo';
+          expect(comboBox.$.input.bindValue).to.eql('foo');
+        });
       });
 
       describe('value property', function() {

@@ -309,7 +309,7 @@ Custom property | Description | Default
     },
 
     _getItemValue: function(item) {
-      var value = this.get(this.itemValuePath, item);
+      var value = item ? this.get(this.itemValuePath, item) : item;
       if (value === undefined || value === null) {
         value = item ? item.toString() : '';
       }
@@ -580,7 +580,10 @@ Custom property | Description | Default
     },
 
     _selectedItemChanged: function(event, detail) {
-      if (detail.value !== null) {
+      if (detail.value === '') {
+        this.$.overlay.$.selector.clearSelection();
+        this.value = '';
+      } else if (detail.value !== null) {
         this._setSelectedItem(detail.value);
         this.$.input.bindValue = this._getItemLabel(this.selectedItem);
         this.value = this._getItemValue(this.selectedItem);
