@@ -153,6 +153,13 @@
       }
     },
 
+    created: function () {
+      this._overlayTemplate = this.parentNode.querySelector('.overlay-template');
+      var style = this._overlayTemplate.content.querySelector('style');
+      this._overlayTemplate.content.removeChild(style);
+      this._styles.push(style);
+    },
+
     ready: function() {
       this._patchWheelOverScrolling();
 

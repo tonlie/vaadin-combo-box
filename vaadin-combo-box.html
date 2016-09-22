@@ -217,6 +217,12 @@ Custom property | Description | Default
       vaadin.elements.combobox.ComboBoxBehavior
     ],
 
+
+    created: function () {
+      var template = this.querySelector('.overlay-template');
+      this._template.content.appendChild(template);
+    },
+
     properties: {
       /**
        * The label for this element.
