@@ -25,6 +25,10 @@
       overflow: hidden;
     }
 
+    :host[loading] .item {
+      opacity: 0.5;
+    }
+
     #scroller {
       overflow: auto;
       max-height: var(--vaadin-combo-box-overlay-max-height, 65vh);
@@ -96,6 +100,10 @@
     ],
 
     properties: {
+      loading: {
+        type: Boolean,
+        reflectToAttribute: true
+      },
 
       /**
        * True if the device supports touch events.

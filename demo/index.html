@@ -38,21 +38,29 @@
       </template>
     </demo-snippet>
 
+    <dom-module id="x-data-source">
+      <script>
+        Polymer({
+          is: 'x-data-source',
+
+          properties: {
+            items: {
+              notify: true,
+              value: function() {
+                return elements;
+              }
+            }
+          }
+        });
+      </script>
+    </dom-module>
+
     <h3>Selecting a Value</h3>
     <demo-snippet>
-      <template>
-        <vaadin-combo-box id="demo2" label="Element"></vaadin-combo-box>
-        <p>Selected value: <span id="selected-value"></span>.</p>
-
-        <script>
-          var combobox = document.querySelector('#demo2');
-          combobox.items = elements;
-
-          combobox.addEventListener('value-changed', function() {
-            document.querySelector('#selected-value').innerHTML = combobox.value;
-          });
-          combobox.value = 'Carbon';
-        </script>
+      <template is="dom-bind" value="Carbon">
+        <x-data-source items="{{elements}}"></x-data-source>
+        <vaadin-combo-box label="Element" value="{{value}}" items="[[elements]]"></vaadin-combo-box>
+        <p>Selected value: [[value]].</p>
       </template>
     </demo-snippet>
 

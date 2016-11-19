@@ -10,6 +10,9 @@
   /** @polymerBehavior vaadin.elements.combobox.ComboBoxBehavior */
   vaadin.elements.combobox.ComboBoxBehaviorImpl = {
     properties: {
+
+      dataSource: Function,
+
       /**
        * An array of values to be displayed as options in the dropdown. The
        * options can be of either `String` or `Object` type.
@@ -63,6 +66,7 @@
 
       _filter: {
         type: String,
+        notify: true,
         value: ''
       },
 
@@ -117,8 +121,9 @@
     },
 
     observers: [
+      '_dataSourceChanged(dataSource)',
       '_filterChanged(_filter, itemValuePath, itemLabelPath)',
-      '_itemsChanged(items.splices)',
+      '_itemsChanged(items.*)',
       '_setItems(items, itemValuePath, itemLabelPath)'
     ],
 
@@ -395,18 +400,37 @@
       return Polymer.dom(this).querySelector('input:focus') || Polymer.dom(this.root).querySelector('input:focus');
     },
 
-    _filterChanged: function(filter) {
-      this.unlisten(this.$.overlay, '_selected-item-changed', '_selectedItemChanged');
+    _dataSourceChanged: function(dataSource) {
+      if (Array.isArray(dataSource)) {
+        // iron-ajax case
+        this._setItems(dataSource);
+        this.$.overlay.loading = false;
+      }
+    },
 
-      this._setItems(this._filterItems(this.items, filter));
-      this._focusedIndex = this.$.overlay.indexOfLabel(filter);
+    _filterChanged: function(filter, dataSource) {
+      this.$.overlay.loading = true;
+      this.debounce('filtering', function() {
+        this.unlisten(this.$.overlay, '_selected-item-changed', '_selectedItemChanged');
 
-      this.listen(this.$.overlay, '_selected-item-changed', '_selectedItemChanged');
+        if (Array.isArray(this.dataSource)) {
+          // iron-ajax case
+          return;
+        } else if (this.dataSource) {
+          this.dataSource(filter, function(result) {
+            this._setItems(result);
+            this._focusedIndex = this.$.overlay.indexOfLabel(filter);
 
-      // async needed to reposition correctly after filtering
-      this.async(function() {
-        this.$.overlay.notifyResize();
-      }.bind(this));
+            this.listen(this.$.overlay, '_selected-item-changed', '_selectedItemChanged');
+
+            // async needed to reposition correctly after filtering
+            this.async(function() {
+              this.$.overlay.notifyResize();
+              this.$.overlay.loading = false;
+            }.bind(this));
+          }.bind(this));
+        }
+      }, 125);
     },
 
     _revertInputValue: function() {
@@ -423,7 +447,7 @@
       this.hasValue = this._isValidValue(value);
 
       var valueIndex = this._indexOfValue(value);
-      var item = valueIndex > -1 && this.items[valueIndex];
+      var item = valueIndex > -1 && this.$.overlay._items[valueIndex];
       if (this.$.overlay._items && item && this.$.overlay._items.indexOf(item) > -1) {
         this.$.overlay._selectItem(item);
       } else {
@@ -437,10 +461,18 @@
       this.close();
     },
 
-    _itemsChanged: function(change) {
-      if (change && change.indexSplices) {
-        this._setItems(change.indexSplices[0].object);
+    _itemsChanged: function(e) {
+      if (e.path === 'items' || e.path === "items.splices") {
+        this.dataSource = function(filter, callback) {
+          callback(this.items.filter(function(item) {
+            return item.indexOf(filter) >= 0;
+          }.bind(this)));
+        }.bind(this);
       }
+
+      // if (change && change.indexSplices) {
+      //   this._setItems(change.indexSplices[0].object);
+      // }
     },
 
     _filterItems: function(arr, filter) {
@@ -478,7 +510,7 @@
     },
 
     _indexOfValue: function(value, items) {
-      items = items || this.items;
+      items = items || this.$.overlay._items;
       if (items && this._isValidValue(value)) {
         for (var i = 0; i < items.length; i++) {
           if (this._getItemValue(items[i]) === value) {
@@ -496,7 +528,7 @@
      * @return {boolean}
      */
     _isValidValue: function(value) {
-      /* jshint ignore:start */ //IE11 doesn't support Number.isNaN() 
+      /* jshint ignore:start */ //IE11 doesn't support Number.isNaN()
       return value !== NaN && value !== undefined && value !== null;
       /* jshint ignore:end */
     },

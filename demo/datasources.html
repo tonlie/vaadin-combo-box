@@ -1,0 +1,116 @@
+<!doctype html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+  <title>vaadin-combo-box Data Sources</title>
+
+  <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+
+  <link rel="import" href="common.html">
+</head>
+
+<body unresolved>
+  <div class="vertical-section-container centered">
+
+    <dom-module id="x-array-source">
+      <script>
+        Polymer({
+          is: 'x-array-source',
+
+          properties: {
+            items: {
+              notify: true,
+              value: function() {
+                return elements;
+              }
+            }
+          }
+        });
+      </script>
+    </dom-module>
+
+
+    <h3>Using an Array as Data Source</h3>
+    <demo-snippet>
+      <template is="dom-bind">
+        <x-array-source items="{{elements}}"></x-array-source>
+        <vaadin-combo-box label="Element" items="[[elements]]"></vaadin-combo-box>
+      </template>
+    </demo-snippet>
+
+    <h3>Using a Function as Data Source</h3>
+    <demo-snippet>
+      <template is="dom-bind">
+        <x-function-source data-source="{{dataSource}}"></x-function-source>
+        <vaadin-combo-box label="Element" data-source="[[dataSource]]"></vaadin-combo-box>
+        <dom-module id="x-function-source">
+          <script>
+            Polymer({
+              is: 'x-function-source',
+
+              properties: {
+                dataSource: {
+                  type: Function,
+                  notify: true
+                }
+              },
+
+              ready: function() {
+                this.dataSource = function(filter, callback) {
+                  setTimeout(function() {
+                    callback(elements.filter(function(item) {
+                      return item.toLowerCase().indexOf(filter.toLowerCase()) >= 0;
+                    }));
+                  }, 1000); // simulate delay
+                };
+              }
+            });
+          </script>
+        </dom-module>
+      </template>
+    </demo-snippet>
+
+    <dom-module id="x-ajax">
+      <script>
+        Polymer({
+          is: 'x-ajax',
+
+          properties: {
+            filter: String,
+            result: {
+              type: Array,
+              notify: true
+            }
+          },
+
+          observers: ['_filterChanged(filter)'],
+
+          _filterChanged: function(filter) {
+            setTimeout(function() {
+              this.result = elements.filter(function(item) {
+                return item.toLowerCase().indexOf(filter.toLowerCase()) >= 0;
+              });
+            }.bind(this), 1000); // simulate delay
+          }
+        });
+      </script>
+    </dom-module>
+
+    <h3>Using with iron-ajax as Data Source</h3>
+    <demo-snippet>
+      <template is="dom-bind">
+        <!-- x-ajax simulates iron-ajax: when query parameters change, new result array is asyncronously returned -->
+        <x-ajax filter="[[filter]]" result="{{result}}"></x-ajax>
+        <!-- _filter would be made public -->
+        <vaadin-combo-box label="Element" _filter={{filter}} data-source="[[result]]"></vaadin-combo-box>
+      </template>
+    </demo-snippet>
+
+  </div>
+</body>
+
+</html>
