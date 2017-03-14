@@ -27,10 +27,8 @@
         padding: 4px 6px 8px !important;
       }
 
-      :host(:not([has-value])) ::content .clear-button,
-      :host(:not([has-value])) [slot=clear-button],
-      :host(:not([has-value])) .label-and-input-container ::slotted(div[slot=clear-button])
-      {
+      :host(:not([has-value])) ::slotted(div[slot=clear-button]),
+      :host(:not([has-value])) ::slotted(paper-input-container div[slot=clear-button]) {
         background: red;
       }
 
