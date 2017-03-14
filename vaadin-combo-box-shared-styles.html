@@ -28,9 +28,16 @@
       }
 
       :host(:not([has-value])) ::content .clear-button,
-      :host(:not([has-value])) .clear-button {
-        display: none;
+      :host(:not([has-value])) [slot=clear-button],
+      :host(:not([has-value])) .label-and-input-container ::slotted(div[slot=clear-button])
+      {
+        background: red;
       }
+
+      /*:host(:not([has-value])) ::content .clear-button,
+      :host(:not([has-value])) {
+        background: red;
+      }*/
 
       :host([readonly]) ::content .clear-button,
       :host([readonly]) .clear-button,
