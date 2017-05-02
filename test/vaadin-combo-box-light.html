@@ -41,22 +41,19 @@
       beforeEach(function() {
         comboBox = fixture('combobox-light');
         comboBox.items = ['foo', 'bar', 'baz'];
-        ironInput = comboBox.querySelector(Polymer.Element ? 'iron-input' : 'input[is="iron-input"]');
+        ironInput = comboBox.querySelector('iron-input');
       });
 
       describe('using iron-input', function() {
-        it('should find the input element correctly', function() {
-          expect(comboBox.inputElement).to.eql(ironInput);
-        });
 
         it('should bind the input value correctly', function() {
           // Empty string by default.
           expect(comboBox._inputElementValue).to.eql('');
-          expect(ironInput.value).to.eql('');
+          expect(ironInput.bindValue).to.eql('');
 
           comboBox.value = 'foo';
           expect(comboBox._inputElementValue).to.eql('foo');
-          expect(ironInput.value).to.eql('foo');
+          expect(ironInput.bindValue).to.eql('foo');
         });
       });
 

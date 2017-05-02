@@ -25,7 +25,7 @@
         comboBox = fixture('combobox');
 
         // flush iron-input DOM observer to pick up child input
-        if (comboBox._bindableInput._observer) {
+        if (comboBox._bindableInput._observer && comboBox._bindableInput._observer.flush) {
           comboBox._bindableInput._observer.flush();
         }
       });
@@ -116,6 +116,7 @@
 
         it('should set value after setting a custom input value', function() {
           comboBox.open();
+          Polymer.dom.flush();
           comboBox._bindableInput.bindValue = 'foo';
           comboBox.close();
 

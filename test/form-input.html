@@ -37,18 +37,18 @@
         comboBox.allowCustomValue = true;
 
         // flush iron-input DOM observer to pick up child input
-        if(comboBox._bindableInput._observer) {
+        if(comboBox._bindableInput._observer && comboBox._bindableInput._observer.flush) {
           comboBox._bindableInput._observer.flush();
         }
       });
 
       it('should have the given name', function() {
         comboBox.name = 'foo';
-        expect(comboBox.$$('input').getAttribute('name')).to.equal('foo');
+        expect(comboBox._bindableInput.name).to.equal('foo');
       });
 
       it('should have no name', function() {
-        expect(comboBox.$$('input').getAttribute('name')).to.equal(null);
+        expect(comboBox._bindableInput.name).not.to.be.ok;
       });
 
       it('should be required', function() {
@@ -78,6 +78,7 @@
       it('should validate correctly when input value is invalid', function() {
         comboBox.name = 'foo';
         comboBox.required = true;
+        Polymer.dom.flush();
 
         expect(comboBox.validate()).to.equal(false);
         expect(comboBox.invalid).to.be.equal(true);
@@ -104,7 +105,7 @@
         comboBox.allowCustomValue = true;
 
         // flush DOM observer for form child in iron-form
-        if (ironForm._nodeObserver) {
+        if (ironForm._nodeObserver && ironForm._nodeObserver.flush) {
           ironForm._nodeObserver.flush();
         }
       });
@@ -113,7 +114,7 @@
         comboBox.value = 'bar';
 
         // 2.0 API serialisation method name is different
-        var json = Polymer.Element ? ironForm.serializeForm() : form.serialize();
+        var json = ironForm.serializeForm();
         expect(json.foo).to.equal('bar');
       });
 

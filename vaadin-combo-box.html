@@ -205,33 +205,27 @@ Custom property | Description | Default
         allowed-pattern="[[allowedPattern]]"
         invalid="{{invalid}}"
         on-change="_stopPropagation"
-        name$="[[name]]"
+        name="[[name]]"
         label="[[label]]">
-        <input is="iron-input" id="input"
+        <input id="input"
           type="text"
           role="combobox"
           autocomplete="off"
           autocapitalize="none"
-          bind-value="{{_inputElementValue}}"
-          label="[[label]]"
           aria-label$="[[label]]"
           aria-expanded$="[[_getAriaExpanded(opened)]]"
           aria-autocomplete="list"
           disabled$="[[disabled]]"
-          invalid="{{invalid}}"
           prevent-invalid-input="[[preventInvalidInput]]"
-          allowed-pattern="[[allowedPattern]]"
           pattern$="[[pattern]]"
           required$="[[required]]"
           autofocus$="[[autofocus]]"
           inputmode$="[[inputmode]]"
-          name$="[[name]]"
           placeholder$="[[placeholder]]"
           readonly$="[[readonly]]"
           size$="[[size]]"
           on-input="_inputValueChanged"
           on-blur="_onBlur"
-          on-change="_stopPropagation"
           key-event-target>
       </iron-input>
 
@@ -416,7 +410,7 @@ Custom property | Description | Default
 
     attached: function() {
       this._setInputElement(Polymer.dom(this.root).querySelector('input'));
-      this._bindableInput = Polymer.Element ? Polymer.dom(this.root).querySelector('iron-input') : this.inputElement;
+      this._bindableInput = Polymer.dom(this.root).querySelector('iron-input');
 
       // Use the default toggle/clear or one replaced in light DOM.
       this._toggleElement = Polymer.dom(this).querySelector('[slot=toggle-button]') || this.$.toggleIcon;

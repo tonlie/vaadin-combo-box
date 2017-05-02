@@ -101,7 +101,7 @@ two `<paper-button>`s to act as the clear and toggle controls.
     },
 
     attached: function() {
-      var cssSelector = Polymer.Element ? 'iron-input' : 'input[is="iron-input"]';
+      var cssSelector = 'iron-input';
       cssSelector += ',paper-input,.paper-input-input,.input';
       this._setInputElement(Polymer.dom(this).querySelector(cssSelector));
       this._toggleElement = Polymer.dom(this).querySelector('.toggle-button');
