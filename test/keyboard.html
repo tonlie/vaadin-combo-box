@@ -58,6 +58,10 @@
       MockInteractions.keyDownOn(getInput(), 27);
     }
 
+    function tab() {
+      MockInteractions.keyDownOn(getInput(), 9);
+    }
+
     beforeEach(function() {
       comboBox = fixture('combobox');
       comboBox.items = ['foo', 'bar', 'baz'];
@@ -253,10 +257,8 @@
         expect(comboBox._focusedIndex).to.eql(-1);
       });
 
-      it('should close the overlay with escape if there is no focus', function() {
-        comboBox._focusedIndex = -1;
-
-        esc();
+      it('should close the overlay with tab', function() {
+        tab();
 
         expect(comboBox.opened).to.equal(false);
       });
