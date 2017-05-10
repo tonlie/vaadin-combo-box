@@ -171,8 +171,6 @@ This program is available under Apache License Version 2.0, available at https:/
 
         _inputElementValue: String,
 
-        _closeOnBlurIsPrevented: Boolean,
-
         _previousDocumentPointerEvents: String
       };
     }
@@ -200,31 +198,26 @@ This program is available under Apache License Version 2.0, available at https:/
       this.addEventListener('vaadin-dropdown-opened', this._onOpened.bind(this));
       this.addEventListener('keydown', this._onKeyDown.bind(this));
 
+      // we want to prevent any iron-overlay-behavior based overlay from cancelling itself when
+      // combo-box is being closed either by tapping or with esc. See #405.
+      document.addEventListener('iron-overlay-canceled', this._onIronOverlayCanceled.bind(this));
+
       // This listener should listen for "tap" again once composedPath() issues with touch devices
       // have been fixed. See https://github.com/Polymer/polymer/issues/4670
       this._addEventListenerToNode(this, 'up', this._onTap.bind(this));
     }
 
-    _onBlur() {
-      if (!this._closeOnBlurIsPrevented) {
-        this.close();
-      }
-    }
-
     _onOverlayDown(event) {
       if (this.$.overlay.touchDevice && event.target !== this.$.overlay._scroller) {
         // On touch devices, blur the input on touch start inside the overlay, in order to hide
-        // the virtual keyboard. But don't close the overlay on this blur.
-        this._closeOnBlurIsPrevented = true;
+        // the virtual keyboard.
         this.inputElement.blur();
-        this._closeOnBlurIsPrevented = false;
       }
     }
 
     _onTap(e) {
       // prevent 'tap' from getting generated and closing the overlay etc.
       Polymer.Gestures.prevent('tap');
-      this._closeOnBlurIsPrevented = true;
 
       const path = e.composedPath();
       if (path.indexOf(this._clearElement) !== -1) {
@@ -234,8 +227,6 @@ This program is available under Apache License Version 2.0, available at https:/
       } else if (path.indexOf(this.inputElement) !== -1) {
         this._openAsync();
       }
-
-      this._closeOnBlurIsPrevented = false;
     }
 
     /**
@@ -244,16 +235,12 @@ This program is available under Apache License Version 2.0, available at https:/
 
     _onKeyDown(e) {
       if (this._isEventKey(e, 'down')) {
-        this._closeOnBlurIsPrevented = true;
         this._onArrowDown();
-        this._closeOnBlurIsPrevented = false;
 
         // prevent caret from moving
         e.preventDefault();
       } else if (this._isEventKey(e, 'up')) {
-        this._closeOnBlurIsPrevented = true;
         this._onArrowUp();
-        this._closeOnBlurIsPrevented = false;
 
         // prevent caret from moving
         e.preventDefault();
@@ -261,6 +248,8 @@ This program is available under Apache License Version 2.0, available at https:/
         this._onEnter(e);
       } else if (this._isEventKey(e, 'esc')) {
         this._onEscape();
+      } else if(this._isEventKey(e, 'tab')) {
+        this.close();
       }
     }
 
@@ -398,6 +387,12 @@ This program is available under Apache License Version 2.0, available at https:/
       this._lastCommittedValue = this.value;
       this.close();
     }
+
+    _onIronOverlayCanceled(e) {
+       if (this.opened) {
+         e.preventDefault();
+       }
+     }
 
     _onOpened() {
       // Pre P2 iron-list used a debouncer to render. Now that we syncronously render items,
