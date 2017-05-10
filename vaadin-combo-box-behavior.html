@@ -144,8 +144,6 @@
 
       _inputElementValue: String,
 
-      _closeOnBlurIsPrevented: Boolean,
-
       _templatized: Boolean,
       _itemTemplate: Boolean,
 
@@ -178,27 +176,21 @@
 
       // 2.0 does not support 'overlay.selection-changed' syntax in listeners
       this.$.overlay.addEventListener('selection-changed', this._overlaySelectedItemChanged.bind(this));
-    },
 
-    _onBlur: function() {
-      if (!this._closeOnBlurIsPrevented) {
-        this.close();
-      }
+      // we want to prevent any iron-overlay-behavior based overlay from cancelling itself when
+      // combo-box is being closed either by tapping or with esc. See #405.
+      document.addEventListener('iron-overlay-canceled', this._onIronOverlayCanceled.bind(this));
     },
 
     _onOverlayDown: function(event) {
       if (this.$.overlay.touchDevice && event.target !== this.$.overlay.$.scroller) {
         // On touch devices, blur the input on touch start inside the overlay, in order to hide
-        // the virtual keyboard. But don't close the overlay on this blur.
-        this._closeOnBlurIsPrevented = true;
+        // the virtual keyboard.
         this.inputElement.blur();
-        this._closeOnBlurIsPrevented = false;
       }
     },
 
     _onTap: function(e) {
-      this._closeOnBlurIsPrevented = true;
-
       var path = Polymer.dom(e).path;
       if (path.indexOf(this._clearElement) !== -1) {
         this._clear();
@@ -207,8 +199,6 @@
       } else if (path.indexOf(this.inputElement) !== -1) {
         this._openAsync();
       }
-
-      this._closeOnBlurIsPrevented = false;
     },
 
     /**
@@ -217,16 +207,12 @@
 
     _onKeyDown: function(e) {
       if (this._isEventKey(e, 'down')) {
-        this._closeOnBlurIsPrevented = true;
         this._onArrowDown();
-        this._closeOnBlurIsPrevented = false;
 
         // prevent caret from moving
         e.preventDefault();
       } else if (this._isEventKey(e, 'up')) {
-        this._closeOnBlurIsPrevented = true;
         this._onArrowUp();
-        this._closeOnBlurIsPrevented = false;
 
         // prevent caret from moving
         e.preventDefault();
@@ -234,6 +220,8 @@
         this._onEnter(e);
       } else if (this._isEventKey(e, 'esc')) {
         this._onEscape();
+      } else if(this._isEventKey(e, 'tab')) {
+        this.close();
       }
     },
 
@@ -369,6 +357,12 @@
       // In the next _detectAndDispatchChange() call, the change detection should not pass
       this._lastCommittedValue = this.value;
       this.close();
+    },
+
+    _onIronOverlayCanceled: function(e) {
+      if (this.opened) {
+        e.preventDefault();
+      }
     },
 
     _onOpened: function() {

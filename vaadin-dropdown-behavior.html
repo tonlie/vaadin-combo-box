@@ -85,7 +85,7 @@
     _open: function() {
       this.$.overlay._moveTo(document.body);
 
-      this._addOutsideClickListener();
+      this._addOutsideTapListener();
 
       // For touch devices, we don't want to popup virtual keyboard on touch devices unless input
       // is explicitly focused by the user.
@@ -105,7 +105,7 @@
     _close: function() {
       this.$.overlay._moveTo(this.root);
 
-      this._removeOutsideClickListener();
+      this._removeOutsideTabListener();
 
       this.fire('vaadin-dropdown-closed');
     },
@@ -120,26 +120,15 @@
       }
     },
 
-    _addOutsideClickListener: function() {
-      // With desktop mouse, 'click' will make Polymer to fire 'tap' event.
-      // With touch devices, 'touchend' will make Polymer to fire 'tap' event, but browser will also fire 'click'.
-      // So, 'click' and 'tap' can come in any order and we need to make sure that the first one fired will close the overlay.
-      if (this.$.overlay.touchDevice) {
-        Polymer.Gestures.add(document, 'tap', null);
-        document.addEventListener('tap', this._outsideClickListener.bind(this), true);
-      } else {
-        document.addEventListener('click', this._outsideClickListener.bind(this), true);
-      }
+    _addOutsideTapListener: function() {
+      Polymer.Gestures.add(document, 'tap', null);
+      document.addEventListener('tap', this._outsideClickListener.bind(this), true);
     },
 
-    _removeOutsideClickListener: function() {
-      if (this.$.overlay.touchDevice) {
-        // Not sure if this is a good idea to remove this Gesture globally, but that's how the iron-overlay-behavior does it.
-        Polymer.Gestures.remove(document, 'tap', null);
-        document.removeEventListener('tap', this._outsideClickListener.bind(this), true);
-      } else {
-        document.removeEventListener('click', this._outsideClickListener.bind(this), true);
-      }
+    _removeOutsideTabListener: function() {
+      // Not sure if this is a good idea to remove this Gesture globally, but that's how the iron-overlay-behavior does it.
+      Polymer.Gestures.remove(document, 'tap', null);
+      document.removeEventListener('tap', this._outsideClickListener.bind(this), true);
     }
   };
 </script>

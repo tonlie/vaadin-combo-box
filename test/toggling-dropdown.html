@@ -209,26 +209,16 @@
     });
 
     describe('closing', function() {
-      if (touchDevice) {
-        it('should close popup when tapping outside overlay', function() {
-          combobox.open();
+      it('should close popup when tapping outside overlay', function() {
+        combobox.open();
 
-          Polymer.Base.fire('tap', {}, {
-            bubbles: true,
-            node: document.body
-          });
-
-          expect(combobox.opened).to.be.false;
+        Polymer.Base.fire('tap', {}, {
+          bubbles: true,
+          node: document.body
         });
-      } else {
-        it('should close popup when clicking outside overlay', function() {
-          combobox.open();
 
-          document.body.click();
-
-          expect(combobox.opened).to.be.false;
-        });
-      }
+        expect(combobox.opened).to.be.false;
+      });
 
       it('should not close when tapping on the overlay', function() {
         combobox.open();
@@ -246,20 +236,22 @@
         expect(combobox.opened).to.be.true;
       });
 
+      it('should cancel `iron-overlay-canceled` when open', function() {
+        combobox.open();
+
+        var evt = new CustomEvent('iron-overlay-canceled', {cancelable: true});
+
+        document.dispatchEvent(evt);
+
+        expect(evt.defaultPrevented).to.be.true;
+      });
+
       it('should close on clicking icon', function() {
         combobox.open();
 
         tapToggleIcon();
 
         expect(combobox.opened).to.be.false;
-      });
-
-      it('should close the overlay when focus is lost', function() {
-        combobox.open();
-
-        fire(combobox.inputElement, 'blur');
-
-        expect(combobox.opened).to.equal(false);
       });
 
       // When using Shadow DOM polyfill, the style scope of the combobox might
