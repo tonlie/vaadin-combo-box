@@ -9,41 +9,19 @@ This program is available under Apache License Version 2.0, available at https:/
 <link rel="import" href="vaadin-overlay.html">
 <link rel="import" href="../iron-resizable-behavior/iron-resizable-behavior.html">
 
-<dom-module id="vaadin-dropdown">
-  <template>
-    <style>
-       :host {
-        display: block;
-      }
-    </style>
-    <vaadin-overlay id="overlay" opened="[[opened]]" template="{{template}}">
-      <slot></slot>
-    </vaadin-overlay>
-  </template>
-</dom-module>
-
 <script>
   {
     /**
      * `<vaadin-dropdown>` is a Polymer element for creating dropdowns.
      * @memberof Vaadin
      */
-    class DropdownElement extends Polymer.mixinBehaviors(Polymer.IronResizableBehavior, Polymer.Element) {
+    class DropdownElement extends Polymer.mixinBehaviors(Polymer.IronResizableBehavior, Vaadin.OverlayElement) {
       static get is() {
         return 'vaadin-dropdown';
       }
 
       static get properties() {
         return {
-          opened: {
-            type: Boolean,
-            notify: true
-          },
-
-          template: {
-            type: Object,
-            notify: true
-          },
 
           /**
            * True if the device supports touch events.
@@ -87,7 +65,7 @@ This program is available under Apache License Version 2.0, available at https:/
       }
 
       static get observers() {
-        return ['_openedChanged(opened)'];
+        return ['_dropdownOpenedChanged(opened)'];
       }
 
       constructor() {
@@ -109,7 +87,7 @@ This program is available under Apache License Version 2.0, available at https:/
         this.removeEventListener('iron-resize', this._boundSetPosition);
 
         // Making sure the overlay is closed and removed from DOM after detaching the dropdown.
-        this.opened = false;
+        // this.opened = false;
       }
 
       notifyResize() {
@@ -129,9 +107,15 @@ This program is available under Apache License Version 2.0, available at https:/
        * @event vaadin-dropdown-closed
        */
 
-      _openedChanged(opened) {
+      _dropdownOpenedChanged(opened) {
+        // TODO: Temporary workaround
+        if (this._wasOpened === opened) {
+          return;
+        }
+        this._wasOpened = opened;
+
         if (opened) {
-          this.$.overlay.style.position = this._isPositionFixed(this.positionTarget) ? 'fixed' : 'absolute';
+          this.style.position = this._isPositionFixed(this.positionTarget) ? 'fixed' : 'absolute';
           this._setPosition();
 
           window.addEventListener('scroll', this._boundSetPosition, true);
@@ -150,7 +134,7 @@ This program is available under Apache License Version 2.0, available at https:/
       // open(), this would happen: https://www.youtube.com/watch?v=Z86V_ICUCD4
       _outsideClickListener(event) {
         var eventPath = event.composedPath();
-        if (eventPath.indexOf(this.positionTarget) < 0 && eventPath.indexOf(this.$.overlay) < 0) {
+        if (eventPath.indexOf(this.positionTarget) < 0 && eventPath.indexOf(this) < 0) {
           this.opened = false;
         }
       }
@@ -217,16 +201,17 @@ This program is available under Apache License Version 2.0, available at https:/
       _setPosition(e) {
         if (e && e.target) {
           var target = e.target === document ? document.body : e.target;
-          var parent = this.$.overlay.parentElement;
-          if (!(target.contains(this.$.overlay) || target.contains(this.positionTarget)) || parent !== document.body) {
-            return;
+          var parent = this.parentElement;
+          if (!(target.contains(this) || target.contains(this.positionTarget)) || parent !== document.body) {
+            // TODO: Re-enable
+            // return;
           }
         }
 
         var targetRect = this.positionTarget.getBoundingClientRect();
         this.alignedAbove = this._shouldAlignAbove();
 
-        var overlayRect = this.$.overlay.getBoundingClientRect();
+        var overlayRect = this.getBoundingClientRect();
         this._translateX = targetRect.left - overlayRect.left + (this._translateX || 0);
         this._translateY = targetRect.top - overlayRect.top + (this._translateY || 0) +
           this._verticalOffset(overlayRect, targetRect);
@@ -234,12 +219,51 @@ This program is available under Apache License Version 2.0, available at https:/
         var _devicePixelRatio = window.devicePixelRatio || 1;
         this._translateX = Math.round(this._translateX * _devicePixelRatio) / _devicePixelRatio;
         this._translateY = Math.round(this._translateY * _devicePixelRatio) / _devicePixelRatio;
-        this.$.overlay.style.transform = `translate3d(${this._translateX}px, ${this._translateY}px, 0)`;
+        this.style.transform = `translate3d(${this._translateX}px, ${this._translateY}px, 0)`;
 
-        this.$.overlay.style.width = this.positionTarget.clientWidth + 'px';
+        this.style.width = this.positionTarget.clientWidth + 'px';
 
         // TODO: fire only when position actually changes changes
-        this.dispatchEvent(new CustomEvent('position-changed'));
+        // this.dispatchEvent(new CustomEvent('position-changed'));
+
+        this._setOverlayHeight();
+      }
+
+      _setOverlayHeight() {
+        if (!this.positionTarget) {
+          return;
+        }
+
+        var targetRect = this.positionTarget.getBoundingClientRect();
+
+        // TODO: This can be in the combo box theme (no need for CSS prop)
+        var maxHeight = (window.ShadyCSS ?
+          window.ShadyCSS.getComputedStyleValue(this, '--vaadin-dropdown-max-height') :
+          getComputedStyle(this).getPropertyValue('--vaadin-dropdown-max-height')) || '';
+        this.style.maxHeight = maxHeight;
+
+
+        this.style.height = this._maxOverlayHeight(targetRect);
+
+
+        // we need to set height for iron-list to make its `firstVisibleIndex` work correctly.
+        // this._selector.style.maxHeight = this._maxOverlayHeight(targetRect);
+
+        // this.updateViewportBoundaries();
+      }
+
+      _maxOverlayHeight(targetRect) {
+        // TODO: This can be in the combo box theme
+        var margin = (window.ShadyCSS ?
+          window.ShadyCSS.getComputedStyleValue(this, '--vaadin-dropdown-client-margin') :
+          getComputedStyle(this).getPropertyValue('--vaadin-dropdown-client-margin')) || 0;
+        var bottom = Math.min(window.innerHeight, document.body.scrollHeight - document.body.scrollTop);
+
+        if (this.alignedAbove) {
+          return (targetRect.top - margin + Math.min(document.body.scrollTop, 0)) + 'px';
+        } else {
+          return (bottom - targetRect.bottom - margin) + 'px';
+        }
       }
     }
 

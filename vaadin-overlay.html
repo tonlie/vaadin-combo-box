@@ -26,6 +26,10 @@ This program is available under Apache License Version 2.0, available at https:/
         z-index: 200;
         overflow: hidden;
       }
+
+      :host(:not([opened])) {
+        display: none;
+      }
     </style>
     <slot id="slot" on-slotchange="_assignTemplate"></slot>
   </template>
@@ -63,7 +67,7 @@ This program is available under Apache License Version 2.0, available at https:/
       }
 
       static get observers() {
-        return ['_openedChanged(opened)', '_templateChanged(template)'];
+        return ['_overlayOpenedChanged(opened)', '_templateChanged(template)'];
       }
 
       ready() {
@@ -78,7 +82,7 @@ This program is available under Apache License Version 2.0, available at https:/
         this.template = templates[0] || undefined;
       }
 
-      _openedChanged(opened) {
+      _overlayOpenedChanged(opened) {
         if (opened) {
           this._placeholder = document.createComment('vaadin-overlay-placeholder');
           this.parentNode.insertBefore(this._placeholder, this);

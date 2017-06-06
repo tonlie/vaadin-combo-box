@@ -15,69 +15,64 @@
 
 <dom-module id="vaadin-combo-box-overlay">
   <template>
-    <vaadin-dropdown id="dropdown" opened="{{opened}}" position-target="[[positionTarget]]" vertical-offset="[[verticalOffset]]"
-      on-template-changed="_templateChanged" on-position-changed="_setOverlayHeight">
-      <template>
-        <style>
-           :host([opened][loading]) {
-            display: block !important;
-            height: 58px;
-          }
+    <style>
+       :host([opened][loading]) {
+        display: block !important;
+        height: 58px;
+      }
 
-          #scroller {
-            overflow: auto;
+      #scroller {
+        overflow: auto;
 
-            /* Fixes item background from getting on top of scrollbars on Safari */
-            transform: translate3d(0, 0, 0);
+        /* Fixes item background from getting on top of scrollbars on Safari */
+        transform: translate3d(0, 0, 0);
 
-            /* Enable momentum scrolling on iOS (iron-list v1.2+ no longer does it for us) */
-            -webkit-overflow-scrolling: touch;
-            height: 100%;
-          }
+        /* Enable momentum scrolling on iOS (iron-list v1.2+ no longer does it for us) */
+        -webkit-overflow-scrolling: touch;
+        height: 100%;
+      }
 
-          #selector {
-            max-height: 100%;
-            --iron-list-items-container: {
-              border-top: 8px solid transparent;
-              border-bottom: 8px solid transparent;
-            };
-          }
+      #selector {
+        max-height: 100%;
+        --iron-list-items-container: {
+          border-top: 8px solid transparent;
+          border-bottom: 8px solid transparent;
+        };
+      }
 
-          #selector vaadin-combo-box-item {
-            cursor: pointer;
-            padding: 13px 16px;
-            color: var(--primary-text-color);
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-          }
+      #selector vaadin-combo-box-item {
+        cursor: pointer;
+        padding: 13px 16px;
+        color: var(--primary-text-color);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
 
-          #selector:not([touch-device]) vaadin-combo-box-item:hover,
-          #selector vaadin-combo-box-item[focused] {
-            background: #eee;
-          }
+      #selector:not([touch-device]) vaadin-combo-box-item:hover,
+      #selector vaadin-combo-box-item[focused] {
+        background: #eee;
+      }
 
-          #selector vaadin-combo-box-item[selected] {
-            color: var(--primary-color);
-          }
+      #selector vaadin-combo-box-item[selected] {
+        color: var(--primary-color);
+      }
 
-          #selector vaadin-combo-box-item[hidden] {
-            display: none;
-          }
-        </style>
-        <vaadin-spinner active="[[loading]]"></vaadin-spinner>
-        <div id="scroller" scroller="[[_scroller]]" on-tap="_stopPropagation" on-touchstart="_onTouchStart" on-touchend="_preventDefault"
-          on-scroll="_onScroll" hidden$="[[loading]]">
-          <iron-list id="selector" touch-device$="[[touchDevice]]" role="listbox" items="[[_items]]" scroll-target="[[_scroller]]">
-            <template>
-              <vaadin-combo-box-item on-tap="_onTap" index="[[index]]" item="[[item]]" label="[[getItemLabel(item)]]" selected="[[_isItemSelected(item, _selectedItem)]]"
-                role$="[[_getAriaRole(index)]]" aria-selected$="[[_getAriaSelected(_focusedIndex,index)]]" focused="[[_isItemFocused(_focusedIndex,index)]]">
-              </vaadin-combo-box-item>
-            </template>
-          </iron-list>
-        </div>
-      </template>
-    </vaadin-dropdown>
+      #selector vaadin-combo-box-item[hidden] {
+        display: none;
+      }
+    </style>
+    <vaadin-spinner active="[[loading]]"></vaadin-spinner>
+    <div id="scroller" scroller="[[_scroller]]" on-tap="_stopPropagation" on-touchstart="_onTouchStart" on-touchend="_preventDefault"
+      on-scroll="_onScroll" hidden$="[[loading]]">
+      <iron-list id="selector" touch-device$="[[touchDevice]]" role="listbox" items="[[_items]]" scroll-target="[[_scroller]]">
+        <template>
+          <vaadin-combo-box-item on-tap="_onTap" index="[[index]]" item="[[item]]" label="[[getItemLabel(item)]]" selected="[[_isItemSelected(item, _selectedItem)]]"
+            role$="[[_getAriaRole(index)]]" aria-selected$="[[_getAriaSelected(_focusedIndex,index)]]" focused="[[_isItemFocused(_focusedIndex,index)]]">
+          </vaadin-combo-box-item>
+        </template>
+      </iron-list>
+    </div>
   </template>
 </dom-module>
 
@@ -117,8 +112,7 @@
           loading: {
             type: Boolean,
             value: false,
-            reflectToAttribute: true,
-            observer: '_setOverlayHeight'
+            reflectToAttribute: true
           },
 
           /**
@@ -181,20 +175,24 @@
         }
 
         // Prevent blurring the input when clicking inside the overlay.
-        this.$.dropdown.$.overlay.addEventListener('mousedown', e => e.preventDefault());
+        // this.$.dropdown.$.overlay.addEventListener('mousedown', e => e.preventDefault());
+        this.addEventListener('mousedown', e => e.preventDefault());
+
+        // TODO: These don't need to be set programmatically anymore
+        this._selector = this.$.selector;
+        this._scroller = this.$.scroller;
       }
 
       _templateChanged(e) {
-        this._selector = this.$.dropdown.$.overlay.root.querySelector('#selector');
-        this._scroller = this.$.dropdown.$.overlay.root.querySelector('#scroller');
+
       }
 
       _loadingChanged(loading) {
-        if (loading) {
-          this.$.dropdown.$.overlay.setAttribute('loading', '');
-        } else {
-          this.$.dropdown.$.overlay.removeAttribute('loading');
-        }
+        // if (loading) {
+        //   this.$.dropdown.$.overlay.setAttribute('loading', '');
+        // } else {
+        //   this.$.dropdown.$.overlay.removeAttribute('loading');
+        // }
       }
 
       _selectorChanged(selector) {
@@ -204,41 +202,6 @@
         // will resolve templatizer issues in P2 that previously
         // required calling _flushProperties/_enableProperties.
         this._patchIronListStamping();
-      }
-
-      _setOverlayHeight() {
-        if (!this.positionTarget || !this._selector) {
-          return;
-        }
-
-        var targetRect = this.positionTarget.getBoundingClientRect();
-
-        // This can be in the overlay theme (no need for CSS prop)
-        var maxHeight = (window.ShadyCSS ?
-          window.ShadyCSS.getComputedStyleValue(this, '--vaadin-combo-box-overlay-max-height') :
-          getComputedStyle(this).getPropertyValue('--vaadin-combo-box-overlay-max-height')) || '65vh';
-
-        // overlay max height is restrained by the #scroller max height which is set to 65vh in CSS.
-        this.$.dropdown.$.overlay.style.height = this._maxOverlayHeight(targetRect);
-
-        this.$.dropdown.$.overlay.style.maxHeight = maxHeight;
-
-        // we need to set height for iron-list to make its `firstVisibleIndex` work correctly.
-        // this._selector.style.maxHeight = this._maxOverlayHeight(targetRect);
-
-        this.updateViewportBoundaries();
-      }
-
-      _maxOverlayHeight(targetRect) {
-        var margin = 8;
-        var minHeight = 116; // Height of two items in combo-box
-        var bottom = Math.min(window.innerHeight, document.body.scrollHeight - document.body.scrollTop);
-
-        if (this.$.dropdown.alignedAbove) {
-          return Math.max(targetRect.top - margin + Math.min(document.body.scrollTop, 0), minHeight) + 'px';
-        } else {
-          return Math.max(bottom - targetRect.bottom - margin, minHeight) + 'px';
-        }
       }
 
       _patchIronListStamping() {
