@@ -32,14 +32,15 @@
 
             /* Enable momentum scrolling on iOS (iron-list v1.2+ no longer does it for us) */
             -webkit-overflow-scrolling: touch;
+            height: 100%;
           }
 
           #selector {
+            max-height: 100%;
             --iron-list-items-container: {
               border-top: 8px solid transparent;
               border-bottom: 8px solid transparent;
-            }
-            ;
+            };
           }
 
           #selector vaadin-combo-box-item {
@@ -212,15 +213,18 @@
 
         var targetRect = this.positionTarget.getBoundingClientRect();
 
-        this._scroller.style.maxHeight = (window.ShadyCSS ?
+        // This can be in the overlay theme (no need for CSS prop)
+        var maxHeight = (window.ShadyCSS ?
           window.ShadyCSS.getComputedStyleValue(this, '--vaadin-combo-box-overlay-max-height') :
           getComputedStyle(this).getPropertyValue('--vaadin-combo-box-overlay-max-height')) || '65vh';
 
         // overlay max height is restrained by the #scroller max height which is set to 65vh in CSS.
-        this.$.dropdown.$.overlay.style.maxHeight = this._maxOverlayHeight(targetRect);
+        this.$.dropdown.$.overlay.style.height = this._maxOverlayHeight(targetRect);
+
+        this.$.dropdown.$.overlay.style.maxHeight = maxHeight;
 
         // we need to set height for iron-list to make its `firstVisibleIndex` work correctly.
-        this._selector.style.maxHeight = this._maxOverlayHeight(targetRect);
+        // this._selector.style.maxHeight = this._maxOverlayHeight(targetRect);
 
         this.updateViewportBoundaries();
       }
