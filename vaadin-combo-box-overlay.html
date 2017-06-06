@@ -16,9 +16,10 @@
 <dom-module id="vaadin-combo-box-overlay">
   <template>
     <style>
-       :host([opened][loading]) {
-        display: block !important;
-        height: 58px;
+      :host {
+        display: block;
+        height: 100%;
+        max-height: 65vh;
       }
 
       #scroller {
@@ -162,7 +163,7 @@
       }
 
       static get observers() {
-        return ['_selectorChanged(selector)', '_loadingChanged(loading)'];
+        return ['_selectorChanged(selector)', '_loadingChanged(loading)', '_openedChanged(opened)'];
       }
 
       ready() {
@@ -229,6 +230,10 @@
         if (!this._notTapping && !this._ignoreTaps) {
           this.dispatchEvent(new CustomEvent('selection-changed', {detail: {item: e.model.item}}));
         }
+      }
+
+      _openedChanged() {
+        this.$.selector.updateViewportBoundaries();
       }
 
       _onTouchStart() {
