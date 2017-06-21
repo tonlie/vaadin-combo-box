@@ -107,7 +107,10 @@
             }
           },
 
-          opened: Boolean,
+          opened: {
+            type: Boolean,
+            notify: true
+          },
 
           /*
            * `true` when new items are being loaded.
