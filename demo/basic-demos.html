@@ -1,0 +1,111 @@
+<dom-module id="basic-demos">
+  <template>
+    <style>
+       :host {
+        display: block;
+      }
+
+    </style>
+
+    <h2>Configuring Combo Box</h2>
+    <vaadin-demo-snippet>
+      <template preserve-content>
+        <vaadin-combo-box items="[[elements]]" label="Element"></vaadin-combo-box>
+        <vaadin-combo-box items="[[elements]]" label="Disabled" disabled></vaadin-combo-box>
+        <vaadin-combo-box items="[[elements]]" label="Read-only" value="Carbon" readonly></vaadin-combo-box>
+      </template>
+    </vaadin-demo-snippet>
+
+    <h2>TabIndex</h2>
+    <vaadin-demo-snippet>
+      <template preserve-content>
+        <vaadin-combo-box tabindex="4" placeholder="TabIndex 4"></vaadin-combo-box>
+        <vaadin-combo-box tabindex="3" placeholder="TabIndex 3"></vaadin-combo-box>
+        <vaadin-combo-box tabindex="2" placeholder="TabIndex 2 disabled" disabled></vaadin-combo-box>
+        <vaadin-combo-box tabindex="1" placeholder="TabIndex 1"></vaadin-combo-box>
+      </template>
+    </vaadin-demo-snippet>
+
+
+    <h2>Selecting a Value</h2>
+    <vaadin-demo-snippet>
+      <template preserve-content>
+        <vaadin-combo-box items="[[elements]]" value="{{selectedValue}}" label="Element"></vaadin-combo-box>
+        <p>Selected value: <span id="selected-value">[[selectedValue]]</span>.</p>
+      </template>
+    </vaadin-demo-snippet>
+
+    <h2>Using as a Form Field</h2>
+    <vaadin-demo-snippet id="form-field-demo">
+      <template preserve-content>
+        <iron-form>
+          <form method="post">
+            <vaadin-combo-box items="[[elements]]" name="name" required error-message="This field is required"></vaadin-combo-box>
+            <vaadin-button>Submit</vaadin-button>
+          </form>
+        </iron-form>
+
+        <script>
+          window.addDemoReadyListener('#form-field-demo', demo => {
+            var form = demo.querySelector('iron-form');
+            var combobox = form.querySelector('vaadin-combo-box');
+
+            form.addEventListener('iron-form-submit', function () {
+              alert('Form submitted with name: ' + form.serializeForm().name);
+              return false;
+            });
+
+            var button = demo.querySelector('vaadin-button');
+            button.addEventListener('click', function () {
+              form.submit();
+            });
+          });
+        </script>
+      </template>
+    </vaadin-demo-snippet>
+
+
+    <h2>Change Event</h2>
+    <vaadin-demo-snippet id="change-event-demo">
+      <template preserve-content>
+        <vaadin-combo-box items="[[elements]]" id="elements"></vaadin-combo-box>
+        <paper-button id="setRandomValue" raised>Set random value</paper-button>
+        <script>
+          window.addDemoReadyListener('#change-event-demo', demo => {
+            var combobox = demo.querySelector('#elements');
+
+            combobox.addEventListener('change', e => {
+              if (combobox.value) {
+                alert('User selected value ' + combobox.value);
+              } else {
+                alert('User has cleared the value');
+              }
+            });
+
+            demo.querySelector('#setRandomValue').addEventListener('click', () => {
+              combobox.value = combobox.items[Math.floor(Math.random() * combobox.items.length)];
+            });
+          });
+        </script>
+      </template>
+    </vaadin-demo-snippet>
+  </template>
+  <script>
+          class BasicDemos extends DemoReadyEventEmitter(Polymer.Element) {
+            static get is() { return 'basic-demos' }
+            static get properties() {
+              return {
+                elements: {
+                  type: Array,
+                  value: () => ComboBoxDemo.elementsJson.map(e => e.name)
+                },
+                selectedValue: {
+                  type: String,
+                  value: 'Carbon'
+                }
+              };
+            }
+          }
+          customElements.define(BasicDemos.is, BasicDemos);
+  </script>
+</dom-module>

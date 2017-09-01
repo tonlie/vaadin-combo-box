@@ -1,0 +1,25 @@
+{
+  "name": "Vaadin ComboBox",
+  "pages": [
+    {
+      "name": "Basic Demos",
+      "url": "basic-demos",
+      "src": "basic-demos.html",
+      "meta": {
+        "title": "Basic usage examples of vaadin combo box",
+        "description": "An awesome and SEO rich description of basic combo box demos.",
+        "image": "https://s-media-cache-ak0.pinimg.com/736x/3b/06/ef/3b06efe25fed62de2960090ff2b8d83a--cute-cartoon-drawings-drawings-of.jpg"
+      }
+    },
+    {
+      "name": "Item Template",
+      "url": "item-template",
+      "src": "item-templates.html",
+      "meta": {
+        "title": "Using templates in vaadin combo box",
+        "description": "An awesome and SEO rich description of combo box template demos.",
+        "image": "https://s-media-cache-ak0.pinimg.com/736x/3b/06/ef/3b06efe25fed62de2960090ff2b8d83a--cute-cartoon-drawings-drawings-of.jpg"
+      }
+    }
+  ]
+}
