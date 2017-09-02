@@ -10,9 +10,9 @@
     <h2>Configuring Combo Box</h2>
     <vaadin-demo-snippet>
       <template preserve-content>
-        <vaadin-combo-box items="[[elements]]" label="Element"></vaadin-combo-box>
-        <vaadin-combo-box items="[[elements]]" label="Disabled" disabled></vaadin-combo-box>
-        <vaadin-combo-box items="[[elements]]" label="Read-only" value="Carbon" readonly></vaadin-combo-box>
+        <vaadin-combo-box items="[[elementNames]]" label="Element"></vaadin-combo-box>
+        <vaadin-combo-box items="[[elementNames]]" label="Disabled" disabled></vaadin-combo-box>
+        <vaadin-combo-box items="[[elementNames]]" label="Read-only" value="Carbon" readonly></vaadin-combo-box>
       </template>
     </vaadin-demo-snippet>
 
@@ -30,7 +30,7 @@
     <h2>Selecting a Value</h2>
     <vaadin-demo-snippet>
       <template preserve-content>
-        <vaadin-combo-box items="[[elements]]" value="{{selectedValue}}" label="Element"></vaadin-combo-box>
+        <vaadin-combo-box items="[[elementNames]]" value="{{selectedValue}}" label="Element"></vaadin-combo-box>
         <p>Selected value: <span id="selected-value">[[selectedValue]]</span>.</p>
       </template>
     </vaadin-demo-snippet>
@@ -40,7 +40,7 @@
       <template preserve-content>
         <iron-form>
           <form method="post">
-            <vaadin-combo-box items="[[elements]]" name="name" required error-message="This field is required"></vaadin-combo-box>
+            <vaadin-combo-box items="[[elementNames]]" name="name" required error-message="This field is required"></vaadin-combo-box>
             <vaadin-button>Submit</vaadin-button>
           </form>
         </iron-form>
@@ -68,7 +68,7 @@
     <h2>Change Event</h2>
     <vaadin-demo-snippet id="change-event-demo">
       <template preserve-content>
-        <vaadin-combo-box items="[[elements]]" id="elements"></vaadin-combo-box>
+        <vaadin-combo-box items="[[elementNames]]" id="elements"></vaadin-combo-box>
         <paper-button id="setRandomValue" raised>Set random value</paper-button>
         <script>
           window.addDemoReadyListener('#change-event-demo', demo => {
@@ -91,14 +91,10 @@
     </vaadin-demo-snippet>
   </template>
   <script>
-          class BasicDemos extends DemoReadyEventEmitter(Polymer.Element) {
+          class BasicDemos extends DemoReadyEventEmitter(ComboBoxDemo(Polymer.Element)) {
             static get is() { return 'basic-demos' }
             static get properties() {
               return {
-                elements: {
-                  type: Array,
-                  value: () => ComboBoxDemo.elementsJson.map(e => e.name)
-                },
                 selectedValue: {
                   type: String,
                   value: 'Carbon'

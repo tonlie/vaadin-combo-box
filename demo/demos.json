@@ -12,12 +12,42 @@
       }
     },
     {
+      "name": "Object Items",
+      "url": "object-items",
+      "src": "object-items.html",
+      "meta": {
+        "title": "Using Objects as items in Vaadin Combo Box",
+        "description": "An awesome and SEO rich description of object items.",
+        "image": "https://s-media-cache-ak0.pinimg.com/736x/3b/06/ef/3b06efe25fed62de2960090ff2b8d83a--cute-cartoon-drawings-drawings-of.jpg"
+      }
+    },
+    {
       "name": "Item Template",
       "url": "item-template",
       "src": "item-templates.html",
       "meta": {
         "title": "Using templates in vaadin combo box",
         "description": "An awesome and SEO rich description of combo box template demos.",
+        "image": "https://s-media-cache-ak0.pinimg.com/736x/3b/06/ef/3b06efe25fed62de2960090ff2b8d83a--cute-cartoon-drawings-drawings-of.jpg"
+      }
+    },
+    {
+      "name": "Remote and Custom Filtering",
+      "url": "remote-and-custom-filtering",
+      "src": "remote-and-custom-filtering.html",
+      "meta": {
+        "title": "Remote and custom filtering with Vaadin combo box",
+        "description": "An awesome and SEO rich description of combo box filtering.",
+        "image": "https://s-media-cache-ak0.pinimg.com/736x/3b/06/ef/3b06efe25fed62de2960090ff2b8d83a--cute-cartoon-drawings-drawings-of.jpg"
+      }
+    },
+    {
+      "name": "Advanced",
+      "url": "advenced-demo",
+      "src": "advanced-demo.html",
+      "meta": {
+        "title": "Advanced use cases for Vaadin combo box",
+        "description": "An awesome and SEO rich description of advanced combo box.",
         "image": "https://s-media-cache-ak0.pinimg.com/736x/3b/06/ef/3b06efe25fed62de2960090ff2b8d83a--cute-cartoon-drawings-drawings-of.jpg"
       }
     }

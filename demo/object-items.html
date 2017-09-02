@@ -1,0 +1,104 @@
+<dom-module id="object-items">
+  <template>
+    <style>
+       :host {
+        display: block;
+      }
+
+    </style>
+
+    <h2>Default Label and Value</h2>
+    <vaadin-demo-snippet id="default-label-value">
+      <template preserve-content>
+        <vaadin-combo-box id="numbers-box" label="Number"></vaadin-combo-box>
+        <p>Selected item: <span id="selected-item"></span>.</p>
+        <p>Value: <span id="value"></span>.</p>
+
+        <script>
+          window.addDemoReadyListener('#default-label-value', demo => {
+            var combobox = demo.querySelector('#numbers-box');
+            combobox.items = [
+              { label: 'One', value: 1 },
+              { label: 'Two', value: 2 },
+              { label: 'Three', value: 3 }
+            ];
+
+            combobox.addEventListener('selected-item-changed', function () {
+              demo.querySelector('#selected-item').innerHTML = JSON.stringify(combobox.selectedItem);
+            });
+
+            combobox.addEventListener('value-changed', function () {
+              demo.querySelector('#value').innerHTML = combobox.value;
+            });
+
+            combobox.value = 1;
+          });
+        </script>
+      </template>
+    </vaadin-demo-snippet>
+
+    <h2>Setting Label and Value Path</h2>
+    <vaadin-demo-snippet id="label-and-value-path">
+      <template preserve-content>
+        <vaadin-combo-box id="elements-box" items="[[elements]]" label="Element" item-label-path="name"
+          item-value-path="symbol"></vaadin-combo-box>
+        <p>Selected element name: <span id="element-name"></span>.</p>
+        <p>Value: <span id="element-value"></span>.</p>
+
+        <script>
+          window.addDemoReadyListener('#label-and-value-path', demo => {
+            var combobox = demo.querySelector('#elements-box');
+
+            combobox.addEventListener('selected-item-changed', function () {
+              demo.querySelector('#element-name').innerHTML = combobox.selectedItem && combobox.selectedItem.name;
+            });
+
+            combobox.addEventListener('value-changed', function () {
+              demo.querySelector('#element-value').innerHTML = combobox.value;
+            });
+
+            combobox.value = 'C';
+          });
+        </script>
+      </template>
+    </vaadin-demo-snippet>
+
+    <h2>Object Items with the Same Value</h2>
+    <vaadin-demo-snippet id="items-with-same-value">
+      <template preserve-content>
+        <vaadin-combo-box id="country-synonyms-box" label="Element"></vaadin-combo-box>
+        <p>Selected Item: <span id="country-selected-item"></span>.</p>
+        <p>Value: <span id="country-value"></span>.</p>
+
+        <script>
+          window.addDemoReadyListener('#items-with-same-value', demo => {
+            var countrySynonymsBox = demo.querySelector('#country-synonyms-box');
+
+            countrySynonymsBox.items = [
+              { value: 'US', label: 'United States of America' },
+              { value: 'US', label: 'U.S.A.' }
+            ];
+
+            countrySynonymsBox.addEventListener('selected-item-changed', function () {
+              var selectedItemAsString = JSON.stringify(countrySynonymsBox.selectedItem);
+              demo.querySelector('#country-selected-item').innerText = selectedItemAsString;
+            });
+
+            countrySynonymsBox.addEventListener('value-changed', function () {
+              demo.querySelector('#country-value').innerText = countrySynonymsBox.value;
+            });
+
+            countrySynonymsBox.value = 'US'; // selects first matching item
+          });
+        </script>
+      </template>
+    </vaadin-demo-snippet>
+
+  </template>
+  <script>
+          class ObjectItems extends DemoReadyEventEmitter(ComboBoxDemo(Polymer.Element)) {
+            static get is() { return 'object-items' }
+          }
+          customElements.define(ObjectItems.is, ObjectItems);
+  </script>
+</dom-module>

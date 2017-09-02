@@ -1,0 +1,61 @@
+<dom-module id="remote-and-custom-filtering">
+  <template>
+    <style>
+       :host {
+        display: block;
+      }
+
+    </style>
+
+    <h2>Remote Data Source</h2>
+    <vaadin-demo-snippet>
+      <template preserve-content>
+        <iron-ajax url="http://example.org/?filter=[[filter]]" handle-as="json" last-response="{{response}}"
+          loading="{{loading}}" debounce-duration="500" auto>
+        </iron-ajax>
+
+        <vaadin-combo-box filtered-items="[[response]]" filter="{{filter}}" loading="[[loading]]">
+        </vaadin-combo-box>
+      </template>
+    </vaadin-demo-snippet>
+
+    <h2>Custom Filtering</h2>
+    <vaadin-demo-snippet>
+      <template preserve-content>
+        <vaadin-combo-box filtered-items="[[items]]" on-filter-changed="_filterChanged">
+        </vaadin-combo-box>
+        <script>
+          //TODO: Figure out if there's a way to show the live code
+          class FilterDemo extends Polymer.Element {
+            _filterChanged(e) {
+              // case-sensitive starts-with filtering
+              this.items = this.elementNames.filter(function (el) {
+                return el.indexOf(e.detail.value) === 0;
+              });
+            }
+          }
+        </script>
+      </template>
+    </vaadin-demo-snippet>
+
+  </template>
+  <script>
+    class RemoteAndCustomFiltering extends DemoReadyEventEmitter(ComboBoxDemo(Polymer.Element)) {
+      static get is() { return 'remote-and-custom-filtering' }
+
+      static get properties() {
+        return {
+          items: Array
+        };
+      }
+
+      _filterChanged(e) {
+        // case-sensitive starts-with filtering
+        this.items = this.elementNames.filter(function (el) {
+          return el.indexOf(e.detail.value) === 0;
+        });
+      }
+    }
+    customElements.define(RemoteAndCustomFiltering.is, RemoteAndCustomFiltering);
+  </script>
+</dom-module>

@@ -1,0 +1,58 @@
+<dom-module id="item-templates">
+  <template>
+    <style>
+       :host {
+        display: block;
+      }
+
+    </style>
+
+    <h2>Custom Item Template</h2>
+    <vaadin-demo-snippet>
+      <template preserve-content>
+        <vaadin-combo-box items="[[elements]]" label="Element" item-label-path="name" item-value-path="symbol">
+          <template>
+            <b>[[item.name]], <sub>[[item.number]]</sub>[[item.symbol]]</b><br> array index:
+            [[index]]
+          </template>
+        </vaadin-combo-box>
+      </template>
+    </vaadin-demo-snippet>
+
+    <h2>Focused and Selected Flags</h2>
+    <vaadin-demo-snippet>
+      <template preserve-content>
+        <vaadin-combo-box items="[[elementNames]]" label="Element" value="Carbon">
+          <template>
+            <b>[[item]]</b><br> selected: [[selected]], focused: [[focused]]
+          </template>
+        </vaadin-combo-box>
+      </template>
+    </vaadin-demo-snippet>
+
+    <h2>Item Template with Paper Item Elements</h2>
+    <vaadin-demo-snippet>
+      <template preserve-content>
+        <vaadin-combo-box items="[[users]]" item-value-path="email" item-label-path="email">
+          <template>
+            <paper-icon-item>
+              <img src="[[item.picture.thumbnail]]" style="border-radius: 50%; width: 48px; height: 48px;"
+                slot="item-icon">
+              <paper-item-body two-line style="min-height: 0">
+                <div style="text-transform: capitalize">[[item.name.first]] [[item.name.last]]</div>
+                <div secondary>[[item.email]]</div>
+              </paper-item-body>
+            </paper-icon-item>
+          </template>
+        </vaadin-combo-box>
+      </template>
+    </vaadin-demo-snippet>
+
+  </template>
+  <script>
+    class ItemTemplates extends DemoReadyEventEmitter(ComboBoxDemo(Polymer.Element)) {
+      static get is() { return 'item-templates' }
+    }
+    customElements.define(ItemTemplates.is, ItemTemplates);
+  </script>
+</dom-module>
